@@ -8,7 +8,7 @@ const { Navigator, Screen } = createNativeStackNavigator();
 export function UserRoutes() {
 	return (
 		<Navigator>
-			<Screen name="Search" component={Search} />
+			<Screen name="Search" component={Search} options={{ headerShown: false }} />
 			<Screen name="Results" component={Results} />
 		</Navigator>
 	);
