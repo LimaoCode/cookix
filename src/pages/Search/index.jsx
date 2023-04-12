@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
-import { Button, Container, Icon, IconButton, Input, Stack, TextArea } from 'native-base';
+import { Button, Container, Icon, IconButton, TextArea } from 'native-base';
 
 export default function Search() {
 	const nav = useNavigation();
@@ -25,7 +25,7 @@ export default function Search() {
 					color="#000"
 					textDecorationColor="#000"
 					h={20}
-					placeholder="Pesquise pelo ingrediente desejado!"
+					placeholder="Informe o ingrediente desejado!"
 					w="full"
 					maxW="320"
 				/>
