@@ -7,7 +7,7 @@ import { Box, Button, Container, Icon, IconButton, Text, TextArea, useToast, Ale
 import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
 
-const CHAT_GPD_API_KEY = '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';
+const CHAT_GPD_API_KEY = '';
 // const GCP_SPEECH_TO_TEXT_KEY = process.env.GCP_SPEECH_TO_TEXT_KEY;
 
 const RECORDING_OPTIONS = {
@@ -78,7 +78,7 @@ export default function Search() {
 	function getTranscription(base64File) {
 		setIsConvertingSpeechToText(true);
 
-		fetch(`https://speech.googleapis.com/v1/speech:recognize?key=AIzaSyAwYv-VEzFvXwcmRXC2GC663BopPrHBKFY`, {
+		fetch(`https://speech.googleapis.com/v1/speech:recognize?key=`, {
 			method: 'POST',
 			body: JSON.stringify({
 				config: {
