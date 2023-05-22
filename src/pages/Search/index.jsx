@@ -1,10 +1,9 @@
-import React, { useCallback } from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CHAT_GPD_API_KEY, GCP_SPEECH_TO_TEXT_KEY } from '@env';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
-import { Box, Button, Container, Icon, IconButton, Text, TextArea, useToast, Alert } from 'native-base';
+import { Button, Container, Icon, IconButton, Text, TextArea, Alert } from 'native-base';
 import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
 
@@ -38,9 +37,6 @@ export default function Search() {
 	const [description, setDescription] = useState('');
 	const [recording, setRecording] = useState(null);
 	const [isConvertingSpeechToText, setIsConvertingSpeechToText] = useState(false);
-
-	console.log(process.env.CHAT_GPD_API_KEY);
-	console.log(GCP_SPEECH_TO_TEXT_KEY);
 
 	async function handleRecordingStart() {
 		const { granted } = await Audio.getPermissionsAsync();
@@ -102,7 +98,7 @@ export default function Search() {
 
 	function handleFetchTags() {
 		setIsLoading(true);
-		const prompt = `Generate a list with five recipes in Portuguese with the following ingredients ${description.trim()}.
+		const prompt = `Generate a list with ten recipes in Portuguese with the following ingredients ${description.trim()}.
         Return each separated by json, with title and short description`;
 
 		fetch('https://api.openai.com/v1/engines/text-davinci-003-playground/completions', {
@@ -114,7 +110,7 @@ export default function Search() {
 			body: JSON.stringify({
 				prompt,
 				temperature: 0.22,
-				max_tokens: 500,
+				max_tokens: 4000,
 				top_p: 1,
 				frequency_penalty: 0,
 				presence_penalty: 0
@@ -126,9 +122,16 @@ export default function Search() {
 			.finally(() => setIsLoading(false));
 	}
 
+	console.log(recipes);
+
 	if (recipes !== null) {
-		const recipeJSON = JSON.parse(recipes);
-		nav.navigate('Results', { recipeJSON });
+		try {
+			console.log(recipes);
+			const recipeJSON = JSON.parse(recipes);
+			nav.navigate('Results', { recipeJSON });
+		} catch (error) {
+			() => Alert.alert('Erro', 'Não foi possível apresentar resultado das receitas.');
+		}
 	}
 
 	useEffect(() => {
@@ -166,13 +169,13 @@ export default function Search() {
 					onChangeText={setDescription}
 					value={description}
 					onClear={() => setDescription('')}
-					editable={!isLoading}
+					editable={!isLoading || !isConvertingSpeechToText}
 				/>
 				<Button
 					size="lg"
 					className="bg-primary mx-auto my-4 px-16"
-					// onPress={openResults}
 					onPress={handleFetchTags}
+					disabled={isConvertingSpeechToText}
 					isLoading={isLoading}
 				>
 					Pesquisar
@@ -182,6 +185,7 @@ export default function Search() {
 					onPressIn={handleRecordingStart}
 					onPressOut={handleRecordingStop}
 					isLoading={isConvertingSpeechToText}
+					disabled={isLoading}
 					className="bg-primary my-4"
 					size="lg"
 					alignItems="center"

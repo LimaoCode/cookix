@@ -14,7 +14,7 @@ export function UserRoutes() {
 				component={Results}
 				options={{
 					headerTitle: 'Possíveis receitas',
-
+					headerLeft: () => null,
 					headerTitleAlign: 'center',
 					headerTintColor: '#5F1F15',
 					headerBackTitle: 'Voltar',

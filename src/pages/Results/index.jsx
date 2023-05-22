@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { SafeAreaView } from 'react-native';
-import { Container, Button, ScrollView, VStack, Box, Divider, Text } from 'native-base';
+import { Container, Button, ScrollView, VStack, Box, Divider } from 'native-base';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 export default function Results() {
 	const route = useRoute();
+	const nav = useNavigation();
 
 	const recipes = route.params.recipeJSON;
 
-	console.log('dentro dos resultados ->', recipes);
+	const handlePress = () => {
+		nav.reset({ index: 0, routes: [{ name: 'Search' }] });
+	};
 
 	return (
 		<SafeAreaView className="flex-1 items-center justify-center bg-secondary">
@@ -23,6 +26,9 @@ export default function Results() {
 						</Box>
 					))}
 				</ScrollView>
+				<Button size="lg" className="bg-primary mx-auto my-4 px-16" onPress={handlePress}>
+					Pesquisar novamente
+				</Button>
 			</Container>
 		</SafeAreaView>
 	);
