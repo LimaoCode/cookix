@@ -1,14 +1,12 @@
 import React, { useCallback } from 'react';
 import { useEffect, useState } from 'react';
+import { CHAT_GPD_API_KEY, GCP_SPEECH_TO_TEXT_KEY } from '@env';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Box, Button, Container, Icon, IconButton, Text, TextArea, useToast, Alert } from 'native-base';
 import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
-
-const CHAT_GPD_API_KEY = '';
-// const GCP_SPEECH_TO_TEXT_KEY = process.env.GCP_SPEECH_TO_TEXT_KEY;
 
 const RECORDING_OPTIONS = {
 	android: {
@@ -40,6 +38,9 @@ export default function Search() {
 	const [description, setDescription] = useState('');
 	const [recording, setRecording] = useState(null);
 	const [isConvertingSpeechToText, setIsConvertingSpeechToText] = useState(false);
+
+	console.log(process.env.CHAT_GPD_API_KEY);
+	console.log(GCP_SPEECH_TO_TEXT_KEY);
 
 	async function handleRecordingStart() {
 		const { granted } = await Audio.getPermissionsAsync();
@@ -78,7 +79,7 @@ export default function Search() {
 	function getTranscription(base64File) {
 		setIsConvertingSpeechToText(true);
 
-		fetch(`https://speech.googleapis.com/v1/speech:recognize?key=`, {
+		fetch(`https://speech.googleapis.com/v1/speech:recognize?key=${GCP_SPEECH_TO_TEXT_KEY}`, {
 			method: 'POST',
 			body: JSON.stringify({
 				config: {
@@ -148,16 +149,6 @@ export default function Search() {
 	return (
 		<SafeAreaView className="flex-1 items-center justify-center bg-secondary">
 			<Container className="flex-1 items-center justify-center">
-				{/* {toastMessage &&
-					toast.show({
-						render: () => {
-							return (
-								<Box rounded="sm" className=" bg-primary px-2 py-1 mb-3">
-									Toast Nice Feedback
-								</Box>
-							);
-						}
-					})} */}
 				<Text className=" text-center text-black font-semibold text-3xl my-1">
 					Informe os ingredientes e deixe a magia acontecer!
 				</Text>
