@@ -3,10 +3,11 @@ import { CHAT_GPD_API_KEY, GCP_SPEECH_TO_TEXT_KEY } from '@env';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
-import { Button, Container, Text, TextArea, Alert, Spinner, Hidden, useToast } from 'native-base';
+import { Button, Container, Text, TextArea, Alert, Spinner, Hidden, useToast, View } from 'native-base';
 import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
 import { MotiPressable } from 'moti/interactions';
+import { Keyboard } from 'react-native';
 
 const RECORDING_OPTIONS = {
 	ios: {
@@ -169,32 +170,39 @@ export default function Search() {
 	}, []);
 
 	return (
-		<SafeAreaView className="flex-1 items-center justify-center bg-secondary">
+		<SafeAreaView className="flex-1 items-center justify-center bg-secondary ">
 			<Container className="flex-1 items-center justify-center">
-				<Text className=" text-center text-black font-semibold text-3xl my-1">
-					Informe os ingredientes e deixe a magia acontecer!
-				</Text>
-				<Text className=" text-black font-semibold text-md my-4">
-					O Cookix vai realizar uma busca por possíveis receitas com base nos ingredientes informados
-				</Text>
-				<TextArea
-					backgroundColor="#fff"
-					color="#000"
-					textDecorationColor="#000"
-					w="full"
-					maxW="320"
-					h={32}
-					placeholder="Informe o ingrediente desejado!"
-					onChangeText={setDescription}
-					value={description}
-					onClear={() => setDescription('')}
-					editable={!isLoading || !isConvertingSpeechToText}
-				/>
+				<View>
+					<Text className=" text-center text-black font-semibold text-3xl my-1">
+						Informe os ingredientes e deixe a magia acontecer!
+					</Text>
+					<Text className=" text-center text-black font-semibold text-md my-4">
+						O Cookix vai realizar uma busca por possíveis receitas com base nos ingredientes informados
+					</Text>
+
+					<TextArea
+						backgroundColor="#fff"
+						color="#000"
+						textDecorationColor="#000"
+						w="full"
+						maxW="320"
+						h={32}
+						placeholder="Informe o ingrediente desejado!"
+						onChangeText={setDescription}
+						value={description}
+						onClear={() => setDescription('')}
+						editable={!isLoading || !isConvertingSpeechToText || !recording}
+						isDisabled={isLoading || isConvertingSpeechToText || recording}
+						onKeyPress={({ nativeEvent: { key: Return } }) => {
+							Return === 'Enter' && Keyboard.dismiss();
+						}}
+					/>
+				</View>
 				<Button
 					size="lg"
 					className="bg-primary mx-auto mt-6 mb-12 px-16"
 					onPress={handleFetchTags}
-					disabled={isConvertingSpeechToText || !description || description === ''}
+					disabled={isConvertingSpeechToText || description === null || description === ' '}
 					isLoading={isLoading}
 				>
 					Pesquisar
