@@ -8,14 +8,6 @@ import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
 
 const RECORDING_OPTIONS = {
-	android: {
-		extension: '.m4a',
-		outputFormat: Audio.AndroidOutputFormat.MPEG_4,
-		audioEncoder: Audio.AndroidAudioEncoder.AAC,
-		sampleRate: 44100,
-		numberOfChannels: 2,
-		bitRate: 128000
-	},
 	ios: {
 		extension: '.wav',
 		audioQuality: Audio.IOSAudioQuality.HIGH,
@@ -25,6 +17,11 @@ const RECORDING_OPTIONS = {
 		linearPCMBitDepth: 16,
 		linearPCMIsBigEndian: false,
 		linearPCMIsFloat: false
+	},
+	android: {
+		extension: '.m4a',
+		outputFormat: Audio.AndroidOutputFormat.DEFAULT,
+		audioEncoder: Audio.AndroidAudioEncoder.DEFAULT
 	},
 	web: {}
 };
@@ -80,8 +77,9 @@ export default function Search() {
 			body: JSON.stringify({
 				config: {
 					languageCode: 'pt-BR',
-					encoding: 'LINEAR16',
-					sampleRateHertz: 41000
+					encoding: 'WEBM_OPUS',
+					sampleRateHertz: 24000,
+					maxAlternatives: 3
 				},
 				audio: {
 					content: base64File
@@ -121,8 +119,6 @@ export default function Search() {
 			.catch(() => Alert.alert('Erro', 'Não foi possível buscar as receitas.'))
 			.finally(() => setIsLoading(false));
 	}
-
-	console.log(recipes);
 
 	if (recipes !== null) {
 		try {
