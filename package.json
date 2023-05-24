@@ -20,6 +20,7 @@
     "expo-constants": "^14.2.1",
     "expo-file-system": "~15.2.2",
     "expo-status-bar": "~1.4.4",
+    "moti": "^0.25.3",
     "native-base": "^3.4.28",
     "nativewind": "^2.0.11",
     "react": "18.2.0",

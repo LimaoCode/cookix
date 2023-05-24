@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { CHAT_GPD_API_KEY, GCP_SPEECH_TO_TEXT_KEY } from '@env';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
-import { Button, Container, Icon, IconButton, Text, TextArea, Alert } from 'native-base';
+import { Button, Container, Text, TextArea, Alert, Spinner, Hidden, useToast } from 'native-base';
 import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
+import { MotiPressable } from 'moti/interactions';
 
 const RECORDING_OPTIONS = {
 	ios: {
@@ -28,6 +29,7 @@ const RECORDING_OPTIONS = {
 
 export default function Search() {
 	const nav = useNavigation();
+	const toast = useToast();
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [recipes, setRecipes] = useState(null);
@@ -78,8 +80,7 @@ export default function Search() {
 				config: {
 					languageCode: 'pt-BR',
 					encoding: 'WEBM_OPUS',
-					sampleRateHertz: 24000,
-					maxAlternatives: 3
+					sampleRateHertz: 24000
 				},
 				audio: {
 					content: base64File
@@ -90,7 +91,15 @@ export default function Search() {
 			.then(data => {
 				setDescription(data.results[0].alternatives[0].transcript);
 			})
-			.catch(error => console.log(error))
+			.catch(() =>
+				toast.show({
+					description: 'Error ao transcrever o audio.',
+					fontWeight: 'bold',
+					placement: 'top',
+					bgColor: 'red.700',
+					isClosable: true
+				})
+			)
 			.finally(() => setIsConvertingSpeechToText(false));
 	}
 
@@ -116,17 +125,31 @@ export default function Search() {
 		})
 			.then(response => response.json())
 			.then(data => setRecipes(data.choices[0].text))
-			.catch(() => Alert.alert('Erro', 'Não foi possível buscar as receitas.'))
+			.catch(() =>
+				toast.show({
+					description: 'Erro ao conectar com o CHAT GPT.',
+					fontWeight: 'bold',
+					placement: 'top',
+					bgColor: 'red.700',
+					isClosable: true
+				})
+			)
 			.finally(() => setIsLoading(false));
 	}
 
 	if (recipes !== null) {
 		try {
-			console.log(recipes);
 			const recipeJSON = JSON.parse(recipes);
 			nav.navigate('Results', { recipeJSON });
 		} catch (error) {
-			() => Alert.alert('Erro', 'Não foi possível apresentar resultado das receitas.');
+			() =>
+				toast.show({
+					description: 'Erro ao listar resultados da busca.',
+					fontWeight: 'bold',
+					placement: 'top',
+					bgColor: 'red.700',
+					isClosable: true
+				});
 		}
 	}
 
@@ -169,32 +192,59 @@ export default function Search() {
 				/>
 				<Button
 					size="lg"
-					className="bg-primary mx-auto my-4 px-16"
+					className="bg-primary mx-auto mt-6 mb-12 px-16"
 					onPress={handleFetchTags}
-					disabled={isConvertingSpeechToText}
+					disabled={isConvertingSpeechToText || !description || description === ''}
 					isLoading={isLoading}
 				>
 					Pesquisar
 				</Button>
 
-				<IconButton
-					onPressIn={handleRecordingStart}
-					onPressOut={handleRecordingStop}
-					isLoading={isConvertingSpeechToText}
-					disabled={isLoading}
-					className="bg-primary my-4"
-					size="lg"
-					alignItems="center"
-					padding="6"
-					icon={<Icon as={FontAwesome} name="microphone" />}
-					borderRadius="full"
-					_icon={{
-						alignItems: 'center',
-						marginLeft: '3',
-						color: 'white',
-						size: '4xl'
-					}}
-				/>
+				{isConvertingSpeechToText && <Spinner size="lg" color="#5F1F15" />}
+
+				{isConvertingSpeechToText ? (
+					<Hidden>
+						<MotiPressable
+							className="bg-primary p-10"
+							onPressIn={handleRecordingStart}
+							onPressOut={handleRecordingStop}
+							disabled={isConvertingSpeechToText || isLoading}
+							animate={useMemo(
+								() =>
+									({ pressed }) => {
+										'worklet';
+
+										return {
+											scale: pressed ? 1.2 : 1
+										};
+									},
+								[]
+							)}
+						>
+							<FontAwesome name="microphone" size={72} color="#5F1F15" />
+						</MotiPressable>
+					</Hidden>
+				) : (
+					<MotiPressable
+						className="bg-primary p-10"
+						onPressIn={handleRecordingStart}
+						onPressOut={handleRecordingStop}
+						disabled={isConvertingSpeechToText || isLoading}
+						animate={useMemo(
+							() =>
+								({ pressed }) => {
+									'worklet';
+
+									return {
+										scale: pressed ? 1.2 : 1
+									};
+								},
+							[]
+						)}
+					>
+						<FontAwesome name="microphone" size={72} color="#5F1F15" />
+					</MotiPressable>
+				)}
 			</Container>
 		</SafeAreaView>
 	);
