@@ -3,6 +3,8 @@ Projeto da faculdade de uma aplicação mobile feita em React Native, que utiliz
 
 ## Instalação
 
+Para executar o projeto é necessário ter o Node.JS e o Yarn instalado na sua maquina.
+
 Após o clone do projeto para a criação da node modules utilize o comando:
 
 ```bash
@@ -42,7 +44,7 @@ Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de
 
 ![App Screenshot](https://media.licdn.com/dms/image/D4D22AQH4KaoNYICTIQ/feedshare-shrink_2048_1536/0/1685043096061?e=1687996800&v=beta&t=PHyZL5NLt_i33z2v9gp1XUA3BaaU3IvkE50jJ4zs82I)
 
-![App Screenshot](https://media.licdn.com/dms/image/D4D2CAQFkFJMnKSuWUQ/comment-image-shrink_8192_1280/0/1685043196517?e=1685649600&v=beta&t=xjYvdMzj6NEFGvwMGr3R5VWcRI46GVFC0_YJxR24LLI)
+![App Screenshot](https://media.licdn.com/dms/image/D4D2CAQFkFJMnKSuWUQ/comment-image-shrink_8192_1280/0/1685043196517?e=1686261600&v=beta&t=eRBK3i42Im1EPfJfEOMyexo1nIO9kb-ingmQOh7o2lc)
 
 
 ## Stack utilizada
